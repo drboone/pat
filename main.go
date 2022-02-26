@@ -37,6 +37,7 @@ const (
 	MethodArdop     = "ardop"
 	MethodTelnet    = "telnet"
 	MethodAX25      = "ax25"
+	MethodNetROM    = "netrom"
 	MethodSerialTNC = "serial-tnc"
 	MethodPactor    = "pactor"
 )
@@ -200,7 +201,7 @@ func optionsSet() *pflag.FlagSet {
 	set := pflag.NewFlagSet("options", pflag.ExitOnError)
 
 	set.StringVar(&fOptions.MyCall, "mycall", "", "Your callsign (winlink user).")
-	set.StringVarP(&fOptions.Listen, "listen", "l", "", "Comma-separated list of methods to listen on (e.g. winmor,ardop,telnet,ax25).")
+	set.StringVarP(&fOptions.Listen, "listen", "l", "", "Comma-separated list of methods to listen on (e.g. winmor,ardop,telnet,ax25,netrom).")
 	set.BoolVarP(&fOptions.SendOnly, "send-only", "s", false, "Download inbound messages later, send only.")
 	set.BoolVarP(&fOptions.RadioOnly, "radio-only", "", false, "Radio Only mode (Winlink Hybrid RMS only).")
 	set.BoolVarP(&fOptions.Robust, "robust", "r", false, "Use robust modes only (useful to improve s/n-ratio at remote winmor station).")

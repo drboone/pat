@@ -11,6 +11,7 @@ transport:
   winmor:     WINMOR TNC
   ardop:      ARDOP TNC
   ax25:       AX.25 (Linux only)
+  netrom:     NetROM (Linux only)
   telnet:     TCP/IP
   serial-tnc: Serial AX.25 TNC
   pactor:     SCS PTC modems
@@ -21,11 +22,12 @@ host:
 
   telnet:       [user:pass]@host:port
   ax25:         (optional) host=axport
+  netrom:       (optional) host=nrport
   pactor:       (optional) serial device (e.g. COM1 or /dev/ttyUSB0)
 
 path:
   The last element of the path is the target station's callsign. If the path has
-   multiple hops (e.g. AX.25), they are separated by '/'.
+  multiple hops (e.g. AX.25), they are separated by '/'.
 
 params:
   ?freq=        Sets QSY frequency (winmor, ardop and ax25 only)
@@ -36,6 +38,7 @@ params:
   connect ax25:///LA1B-10            Connect to the RMS Gateway LA1B-10 using Linux AX.25 on the default axport.
   connect ax25://tmd710/LA1B-10      Connect to the RMS Gateway LA1B-10 using Linux AX.25 on axport 'tmd710'.
   connect ax25:///LA1B/LA5NTA        Peer-to-peer connection with LA5NTA via LA1B digipeater.
+  connect netrom:///KB8ZQZ           Peer-to-peer connection with KB8ZQZ using NetROM
   connect winmor:///LA3F             Connect to the RMS HF Gateway LA3F using WINMOR TNC on default tcp address and port.
   connect winmor:///LA3F?freq=5350   Same as above, but set dial frequency of the radio using rigcontrol.
   connect ardop:///LA3F              Connect to the RMS HF Gateway LA3F using ARDOP on the default tcp address and port.

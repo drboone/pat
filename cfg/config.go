@@ -79,13 +79,14 @@ type Config struct {
 
 	// Methods to listen for incoming P2P connections by default.
 	//
-	// Example: ["ax25", "winmor", "telnet", "ardop"]
+	// Example: ["ax25", "netrom", "winmor", "telnet", "ardop"]
 	Listen []string `json:"listen"`
 
 	// Hamlib rigs available (with reference name) for ptt and frequency control.
 	HamlibRigs map[string]HamlibConfig `json:"hamlib_rigs"`
 
 	AX25      AX25Config      `json:"ax25"`       // See AX25Config.
+	NetROM    NetROMConfig    `json:"netrom"`     // See NetROMConfig.
 	SerialTNC SerialTNCConfig `json:"serial-tnc"` // See SerialTNCConfig.
 	Winmor    WinmorConfig    `json:"winmor"`     // See WinmorConfig.
 	Ardop     ArdopConfig     `json:"ardop"`      // See ArdopConfig.
@@ -229,6 +230,17 @@ type AX25Config struct {
 	Rig string `json:"rig"`
 }
 
+type NetROMConfig struct {
+	// axport to use (as defined in /etc/ax25/axports).
+	Port string `json:"port"`
+
+	// Optional beacon when listening for incoming packet-p2p connections.
+	Beacon BeaconConfig `json:"beacon"`
+
+	// (optional) Reference name to the Hamlib rig for frequency control.
+	Rig string `json:"rig"`
+}
+
 type BeaconConfig struct {
 	// Beacon interval in seconds (e.g. 3600 for once every 1 hour)
 	Every int `json:"every"` // (seconds)
@@ -264,6 +276,14 @@ var DefaultConfig = Config{
 	Listen:   []string{},
 	HTTPAddr: "localhost:8080",
 	AX25: AX25Config{
+		Port: "wl2k",
+		Beacon: BeaconConfig{
+			Every:       3600,
+			Message:     "Winlink P2P",
+			Destination: "IDENT",
+		},
+	},
+	NetROM: NetROMConfig{
 		Port: "wl2k",
 		Beacon: BeaconConfig{
 			Every:       3600,

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/la5nta/wl2k-go/transport/ax25"
+	"github.com/la5nta/wl2k-go/transport/netrom"
 	"github.com/la5nta/wl2k-go/transport/telnet"
 )
 
@@ -38,6 +39,8 @@ func Listen(listenStr string) {
 			listenHub.Enable(TelnetListener{})
 		case MethodAX25:
 			listenHub.Enable(&AX25Listener{})
+		case MethodNetROM:
+			listenHub.Enable(&NetROMListener{})
 		case MethodSerialTNC:
 			log.Printf("%s listen not implemented, ignoring.", method)
 		default:
@@ -95,6 +98,58 @@ func (l *AX25Listener) beaconLoop(dur time.Duration) chan<- struct{} {
 
 func (l *AX25Listener) CurrentFreq() (Frequency, bool) { return 0, false }
 func (l *AX25Listener) Name() string                   { return MethodAX25 }
+
+// ---------------------------------
+
+type NetROMListener struct{ stopBeacon chan<- struct{} }
+
+func (l *NetROMListener) Init() (net.Listener, error) {
+	return netrom.ListenNetROM(config.NetROM.Port, fOptions.MyCall)
+}
+
+func (l *NetROMListener) BeaconStart() error {
+	if config.NetROM.Beacon.Every > 0 {
+		l.stopBeacon = l.beaconLoop(time.Duration(config.NetROM.Beacon.Every) * time.Second)
+	}
+	return nil
+}
+
+func (l *NetROMListener) BeaconStop() {
+	select {
+	case l.stopBeacon <- struct{}{}:
+	default:
+	}
+}
+
+func (l *NetROMListener) beaconLoop(dur time.Duration) chan<- struct{} {
+	stop := make(chan struct{}, 1)
+	go func() {
+		b, err := netrom.NewNetROMBeacon(config.NetROM.Port, fOptions.MyCall, config.NetROM.Beacon.Destination, config.NetROM.Beacon.Message)
+		if err != nil {
+			log.Printf("Unable to activate beacon: %s", err)
+			return
+		}
+
+		t := time.Tick(dur)
+		for {
+			select {
+			case <-t:
+				if err := b.Now(); err != nil {
+					log.Printf("%s beacon failed: %s", l.Name(), err)
+					return
+				}
+			case <-stop:
+				return
+			}
+		}
+	}()
+	return stop
+}
+
+func (l *NetROMListener) CurrentFreq() (Frequency, bool) { return 0, false }
+func (l *NetROMListener) Name() string                   { return MethodNetROM }
+
+// ---------------------------------
 
 type ARDOPListener struct{}
 

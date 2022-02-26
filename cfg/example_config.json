@@ -21,6 +21,14 @@
       "destination": "IDENT"
     }
   },
+  "netrom": {
+    "port": "tmd710",
+    "beacon": {
+      "every": 3600,
+      "message": "Winlink P2P",
+      "destination": "IDENT"
+    }
+  },
   "serial-tnc": {
     "path": "/dev/ttyUSB0",
     "hbaud": 1200,

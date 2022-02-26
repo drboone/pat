@@ -18,6 +18,7 @@ import (
 
 	// Register other dialers
 	_ "github.com/la5nta/wl2k-go/transport/ax25"
+	_ "github.com/la5nta/wl2k-go/transport/netrom"
 	_ "github.com/la5nta/wl2k-go/transport/telnet"
 )
 
@@ -85,6 +86,8 @@ func Connect(connectStr string) (success bool) {
 		switch url.Scheme {
 		case MethodAX25:
 			url.Host = config.AX25.Port
+		case MethodNetROM:
+			url.Host = config.NetROM.Port
 		case MethodSerialTNC:
 			url.Host = config.SerialTNC.Path
 			if hbaud := config.SerialTNC.HBaud; hbaud > 0 {
@@ -108,7 +111,7 @@ func Connect(connectStr string) (success bool) {
 		}
 
 		switch url.Scheme {
-		case MethodAX25, MethodSerialTNC:
+		case MethodAX25, MethodNetROM, MethodSerialTNC:
 			log.Printf("Radio-Only is not available for %s", url.Scheme)
 			return
 		default:
